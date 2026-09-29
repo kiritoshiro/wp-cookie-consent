@@ -239,6 +239,7 @@ final class Updater {
 	 * @return array|\WP_Error
 	 */
 	private function get_latest_release() {
+
 		if ( null !== $this->release_cache ) {
 			return $this->release_cache;
 		}
@@ -250,11 +251,6 @@ final class Updater {
 			return $cached;
 		}
 
-		$token = $this->github_token();
-
-		if ( '' === $token ) {
-			return new \WP_Error( 'aicc_github_token_missing', __( 'Private GitHub updates require WP_COOKIE_CONSENT_GITHUB_TOKEN in wp-config.php.', 'aicc' ) );
-		}
 
 		$response = wp_remote_get(
 			self::RELEASE_API,
