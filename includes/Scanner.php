@@ -67,8 +67,9 @@ final class Scanner {
 	}
 
 	public static function is_scan_request(): bool {
-		$raw   = $_GET[ self::PROBE_ARG ] ?? '';
-		$probe = is_string( $raw ) ? sanitize_text_field( wp_unslash( $raw ) ) : '';
+		// Authenticated by the short-lived random server-issued token below.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$probe = isset( $_GET[ self::PROBE_ARG ] ) && is_string( $_GET[ self::PROBE_ARG ] ) ? sanitize_text_field( wp_unslash( $_GET[ self::PROBE_ARG ] ) ) : '';
 		if ( preg_match( '/^[A-Za-z0-9]{32}$/D', $probe ) === 1 && get_transient( 'aicc_probe_' . $probe ) ) {
 			return true;
 		}
@@ -80,8 +81,7 @@ final class Scanner {
 		if ( empty( $_GET['aicc_deep_scan'] ) || ! is_user_logged_in() || ! current_user_can( 'manage_options' ) ) {
 			return false;
 		}
-		$raw   = $_GET['_wpnonce'] ?? '';
-		$nonce = is_string( $raw ) ? sanitize_text_field( wp_unslash( $raw ) ) : '';
+		$nonce = isset( $_GET['_wpnonce'] ) && is_string( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
 
 		return (bool) wp_verify_nonce( $nonce, 'aicc_deep_scan' );
 	}

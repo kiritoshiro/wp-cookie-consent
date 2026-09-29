@@ -28,8 +28,9 @@ final class I18n {
 			return $override;
 		}
 
-		$raw       = $_GET['aicc_lang'] ?? '';
-		$requested = is_string( $raw ) ? sanitize_key( wp_unslash( $raw ) ) : '';
+		// Read-only language preference, checked against LANGS below.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$requested = isset( $_GET['aicc_lang'] ) && is_string( $_GET['aicc_lang'] ) ? sanitize_key( wp_unslash( $_GET['aicc_lang'] ) ) : '';
 		if ( in_array( $requested, self::LANGS, true ) ) {
 			return $requested;
 		}
