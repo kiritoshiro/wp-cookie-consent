@@ -101,6 +101,8 @@ final class Admin {
 		}
 		check_admin_referer( 'aicc_save_cookies' );
 
+		// Every cookie field is type-checked and sanitized in the loop below.
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$rows = isset( $_POST['cookie'] ) && is_array( $_POST['cookie'] ) ? array_slice( wp_unslash( $_POST['cookie'] ), 0, 5000 ) : [];
 		$out  = [];
 
@@ -206,8 +208,9 @@ final class Admin {
 	/* ------------------------------------------------------------------ */
 
 	public function render(): void {
-		$raw_tab = $_GET['tab'] ?? 'settings';
-		$tab     = is_string( $raw_tab ) ? sanitize_key( wp_unslash( $raw_tab ) ) : 'settings';
+		// Read-only tab selection; no state-changing action.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$tab = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'settings';
 		$tabs    = [
 			'settings' => __( 'Nustatymai', 'aicc' ),
 			'cookies'  => __( 'Slapukai ir skenavimas', 'aicc' ),
@@ -292,10 +295,10 @@ final class Admin {
 						<?php
 						wp_dropdown_pages(
 							[
-								'name'              => $name . '[policy_page]',
+								'name'              => esc_attr( $name . '[policy_page]' ),
 								'id'                => 'aicc-page',
 								'selected'          => (int) $s['policy_page'],
-								'show_option_none'  => __( '— nepasirinkta —', 'aicc' ),
+								'show_option_none'  => esc_html__( '— nepasirinkta —', 'aicc' ),
 								'option_none_value' => 0,
 							]
 						);
@@ -407,10 +410,10 @@ final class Admin {
 
 		$deep = wp_nonce_url( add_query_arg( 'aicc_deep_scan', '1', home_url( '/' ) ), 'aicc_deep_scan' );
 		?>
-		<?php if ( ! empty( $_GET['scanned'] ) ) : ?>
+		<?php if ( ! empty( $_GET['scanned'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Displays a static notice only. ?>
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Skenavimas baigtas.', 'aicc' ); ?></p></div>
 		<?php endif; ?>
-		<?php if ( ! empty( $_GET['saved'] ) ) : ?>
+		<?php if ( ! empty( $_GET['saved'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Displays a static notice only. ?>
 			<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Slapukų sąrašas išsaugotas.', 'aicc' ); ?></p></div>
 		<?php endif; ?>
 
@@ -529,7 +532,7 @@ final class Admin {
 			printf(
 				/* translators: %d: number of records */
 				esc_html__( 'Iš viso įrašų: %d. Rodomi naujausi 100.', 'aicc' ),
-				$total
+				(int) $total
 			);
 			?>
 		</p>
