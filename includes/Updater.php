@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Checks private GitHub releases and downloads authenticated release assets.
  */
 final class Updater {
+	private const REPOSITORY     = 'kiritoshiro/wp-cookie-consent';
 	private const REPOSITORY_URL = 'https://github.com/kiritoshiro/wp-cookie-consent';
 	private const RELEASE_API    = 'https://api.github.com/repos/kiritoshiro/wp-cookie-consent/releases/latest';
 	private const ASSET_NAME     = 'wp-cookie-consent.zip';
