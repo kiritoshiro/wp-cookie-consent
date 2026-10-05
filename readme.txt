@@ -41,9 +41,9 @@ Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lie
 * `aicc_new_cookies_found` – veiksmas, kai skeneris randa naujų slapukų.
 * `aicc:consent` – naršyklės įvykis su lankytojo pasirinkimu.
 
-== Privatus GitHub atnaujinimas ==
+== GitHub atnaujinimas ==
 
-Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https://github.com/kiritoshiro/wp-cookie-consent/releases. Kadangi saugykla privati, kiekviename WordPress serveryje reikia nustatyti tik skaitymui skirtą GitHub fine-grained tokeną wp-config.php faile prieš eilutę „That’s all, stop editing“:
+Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https://github.com/kiritoshiro/wp-cookie-consent/releases. Saugykla vieša, todėl tokeno nereikia. Neprivalomas tik skaitymui skirtas GitHub fine-grained tokenas padidina GitHub API užklausų limitą (ir būtų reikalingas, jei saugykla vėl taptų privati). Jį galima nustatyti wp-config.php faile prieš eilutę „That’s all, stop editing“:
 
     define( 'WP_COOKIE_CONSENT_GITHUB_TOKEN', 'github_pat_...' );
 

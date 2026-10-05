@@ -1,6 +1,6 @@
 <?php
 /**
- * Private GitHub release updater for WP Cookie Consent.
+ * GitHub release updater for WP Cookie Consent.
  *
  * @package Adventistai\CookieConsent
  */
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Checks private GitHub releases and downloads authenticated release assets.
+ * Checks GitHub releases and downloads release assets; a token is optional.
  */
 final class Updater {
 	private const REPOSITORY     = 'kiritoshiro/wp-cookie-consent';
@@ -138,7 +138,7 @@ final class Updater {
 	}
 
 	/**
-	 * Download this plugin's private GitHub asset with its configured token.
+	 * Download this plugin's GitHub release asset (with the token, if one is configured).
 	 *
 	 * @param false|string|\WP_Error $reply Existing pre-download result.
 	 * @param string                 $package Package URL.
@@ -163,13 +163,6 @@ final class Updater {
 
 		$token = $this->github_token();
 
-		if ( '' === $token ) {
-			return new \WP_Error(
-				'aicc_github_token_missing',
-				__( 'Configure WP_COOKIE_CONSENT_GITHUB_TOKEN in wp-config.php to download private updates.', 'aicc' )
-			);
-		}
-
 		$temp_file = wp_tempnam( self::ASSET_NAME );
 
 		if ( ! $temp_file ) {
@@ -189,7 +182,7 @@ final class Updater {
 
 		if ( is_wp_error( $response ) ) {
 			wp_delete_file( $temp_file );
-			return new \WP_Error( 'aicc_github_download', __( 'GitHub could not provide the private plugin update.', 'aicc' ), $response );
+			return new \WP_Error( 'aicc_github_download', __( 'GitHub could not provide the plugin update.', 'aicc' ), $response );
 		}
 
 		$status = (int) wp_remote_retrieve_response_code( $response );
@@ -220,7 +213,7 @@ final class Updater {
 
 			if ( is_wp_error( $response ) ) {
 				wp_delete_file( $temp_file );
-				return new \WP_Error( 'aicc_github_download', __( 'The private plugin release asset could not be downloaded.', 'aicc' ), $response );
+				return new \WP_Error( 'aicc_github_download', __( 'The plugin release asset could not be downloaded.', 'aicc' ), $response );
 			}
 
 			$status = (int) wp_remote_retrieve_response_code( $response );
@@ -235,16 +228,12 @@ final class Updater {
 	}
 
 	/**
-	 * Retrieve the latest release using the configured repository token.
+	 * Retrieve the latest release (authenticated only when a token is configured).
 	 *
 	 * @return array|\WP_Error
 	 */
 	private function get_latest_release() {
 		$token = $this->github_token();
-
-		if ( '' === $token ) {
-			return new \WP_Error( 'aicc_github_token_missing', __( 'Private GitHub updates require WP_COOKIE_CONSENT_GITHUB_TOKEN in wp-config.php.', 'aicc' ) );
-		}
 
 		if ( null !== $this->release_cache ) {
 			return $this->release_cache;
@@ -302,17 +291,24 @@ final class Updater {
 	/**
 	 * Build headers for GitHub API requests.
 	 *
-	 * @param string $token GitHub token.
+	 * @param string $token GitHub token, or '' for the public repository.
 	 * @param string $accept Accept header.
 	 * @return array
 	 */
 	private function github_headers( string $token, string $accept ): array {
-		return [
+		$headers = [
 			'Accept'               => $accept,
-			'Authorization'        => 'Bearer ' . $token,
 			'User-Agent'           => 'WP-Cookie-Consent/' . VERSION,
 			'X-GitHub-Api-Version' => '2026-03-10',
 		];
+
+		// The repository is public; a token is optional and only raises the
+		// API rate limit (or restores access if the repository goes private).
+		if ( '' !== $token ) {
+			$headers['Authorization'] = 'Bearer ' . $token;
+		}
+
+		return $headers;
 	}
 
 	/**
