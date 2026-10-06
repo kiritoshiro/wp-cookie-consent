@@ -1,0 +1,15 @@
+{
+  "mounts": [
+    {
+      "host": ".",
+      "vfs": "/wordpress/wp-content/plugins/adventistai-cookie-consent"
+    }
+  ],
+  "plugins": [
+    "adventistai-cookie-consent/adventistai-cookie-consent.php"
+  ],
+  "watch": [
+    "/wordpress/wp-content/plugins/adventistai-cookie-consent/"
+  ],
+  "fixture": "<!-- wp:shortcode -->[aicc_cookie_settings]<!-- /wp:shortcode --><!-- wp:shortcode -->[aicc_cookie_policy]<!-- /wp:shortcode -->"
+}
