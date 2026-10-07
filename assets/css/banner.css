@@ -190,22 +190,39 @@
 
 .aicc-langs { display: flex; gap: 4px; }
 
-.aicc-langs button {
+/* The class is repeated so themes that colour every button (such as ALPS'
+   `.u-theme--denim button`, which made the selected chip green on blue,
+   1.03:1) cannot override the chips. 28 px high for touch (WCAG 2.5.8). */
+.aicc-langs.aicc-langs button {
+	min-width: 32px;
+	min-height: 28px;
+	margin: 0;
 	font: inherit;
 	font-size: .72rem;
+	line-height: 1.2;
 	text-transform: uppercase;
 	letter-spacing: .06em;
-	padding: 3px 7px;
+	padding: 4px 8px;
 	border: 1px solid var(--aicc-line);
 	border-radius: 4px;
-	background: none;
+	background: transparent;
 	color: var(--aicc-muted);
+	box-shadow: none;
 	cursor: pointer;
 }
 
-.aicc-langs button[aria-pressed="true"] {
+.aicc-langs.aicc-langs button:hover,
+.aicc-langs.aicc-langs button:focus-visible {
 	border-color: var(--aicc-accent);
-	color: var(--aicc-accent);
+	background: transparent;
+	color: var(--aicc-fg);
+}
+
+/* Selected: white on the accent green, 7.9:1. */
+.aicc-langs.aicc-langs button[aria-pressed="true"] {
+	border-color: var(--aicc-accent);
+	background: var(--aicc-accent);
+	color: #fff;
 	font-weight: 600;
 }
 
