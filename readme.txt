@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -50,6 +50,9 @@ Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https:
 Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo į saugyklą. Kai GitHub leidimas paskelbiamas, veiksmas prideda wp-cookie-consent.zip diegimo paketą.
 
 == Keitimų istorija ==
+
+= 1.0.12 =
+* Kalbų mygtukai sutikimo lange išlaiko savo išvaizdą, net kai tema nuspalvina visus mygtukus: pasirinkta kalba rodoma baltomis raidėmis žaliame fone (anksčiau buvo žalia ant temos mėlynos ir beveik nematoma), o mygtukai didesni, patogesni liesti.
 
 = 1.0.11 =
 * Perkeltas viešas pavadinimas ir saugykla į WP Cookie Consent / wp-cookie-consent.
