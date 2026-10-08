@@ -70,6 +70,9 @@ jobs:
     - name: WordPress security (PHPCS)
       if: ${{ !cancelled() }}
       run: .github/security/vendor/bin/phpcs --standard=.github/security/phpcs.xml .
+    - name: Updater tests
+      if: ${{ !cancelled() }}
+      run: php tests/updater.php
     - name: Workflow syntax (actionlint)
       if: ${{ !cancelled() }}
       shell: bash
