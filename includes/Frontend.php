@@ -49,16 +49,15 @@ final class Frontend {
 		// stops the browser from parsing the page. The data-no-defer attributes in
 		// script_tag() still keep optimisation plugins from delaying it further.
 		wp_enqueue_script( 'aicc', AICC_URL . 'assets/js/banner.js', [], VERSION, [ 'in_footer' => true, 'strategy' => 'defer' ] );
-
-		wp_localize_script( 'aicc', 'AICC', $this->config() );
 	}
 
 	/**
-	 * Everything the browser needs. Printed twice on purpose: once via
-	 * wp_localize_script, once as an attribute on the root element. Caching and
-	 * optimisation plugins reorder, defer, concatenate and occasionally drop the
-	 * inline `var AICC` block, and when that happened the whole consent UI went
-	 * silent. The attribute travels with the markup, so it cannot be separated.
+	 * Everything the browser needs, printed once as an attribute on the root
+	 * element (render()); banner.js reads it and sets window.AICC. It used to
+	 * be printed a second time through wp_localize_script, which added about
+	 * 15 KB to every page. Caching and optimisation plugins reorder, defer,
+	 * concatenate and occasionally drop that inline `var AICC` block, while
+	 * the attribute travels with the markup and cannot be separated from it.
 	 */
 	private function config(): array {
 		$strings = [];

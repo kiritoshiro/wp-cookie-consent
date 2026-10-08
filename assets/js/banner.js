@@ -10,8 +10,9 @@
 	var root = document.getElementById('aicc-root');
 	if (!root) { return; }
 
-	// Prefer the localized object; fall back to the copy carried by the markup,
-	// which survives script deferring, concatenation and inline-script stripping.
+	// The configuration is carried by the markup (data-aicc-config), which
+	// survives script deferring, concatenation and inline-script stripping.
+	// An object a page already set as window.AICC still takes precedence.
 	var CFG = window.AICC || {};
 	if (!CFG.categories) {
 		var raw = root.getAttribute('data-aicc-config');
