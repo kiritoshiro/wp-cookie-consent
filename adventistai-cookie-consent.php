@@ -3,7 +3,7 @@
  * Plugin Name:       WP Cookie Consent
  * Plugin URI:        https://github.com/kiritoshiro/wp-cookie-consent
  * Description:       Neįkyrus GDPR slapukų sutikimo sprendimas: pagal nutylėjimą veikia tik būtinieji slapukai, sekimo scenarijai blokuojami iki sutikimo, slapukai periodiškai nuskenuojami automatiškai. Sąsaja lietuvių, anglų ir rusų kalbomis.
- * Version:           1.0.14
+ * Version:           1.0.15
  * Requires at least: 6.4
  * Requires PHP:      8.4
  * Update URI:        https://github.com/kiritoshiro/wp-cookie-consent
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-const VERSION = '1.0.14';
+const VERSION = '1.0.15';
 
 define( 'AICC_FILE', __FILE__ );
 define( 'AICC_DIR', plugin_dir_path( __FILE__ ) );

@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.14
+Stable tag: 1.0.15
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -50,6 +50,9 @@ Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https:
 Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo į saugyklą. Kai GitHub leidimas paskelbiamas, veiksmas prideda wp-cookie-consent.zip diegimo paketą.
 
 == Keitimų istorija ==
+
+= 1.0.15 =
+* Greitis: nustatymai į puslapį įrašomi vieną kartą (žymos data-aicc-config atribute), o ne du kartus. Kiekvienas puslapis sumažėja apie 15 KB.
 
 = 1.0.14 =
 * Greitis: sutikimo lango scenarijus įkeliamas su defer, todėl nebestabdo puslapio atvaizdavimo (PageSpeed „Render-blocking requests“). Langas atsiranda tuo pačiu metu kaip anksčiau.
