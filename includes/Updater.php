@@ -37,6 +37,21 @@ final class Updater {
 		add_filter( 'update_plugins_github.com', [ $this, 'provide_update' ], 10, 4 );
 		add_filter( 'upgrader_pre_download', [ $this, 'download_private_package' ], 10, 4 );
 		add_filter( 'plugins_api', [ $this, 'plugin_information' ], 10, 3 );
+		add_action( 'load-update-core.php', [ $this, 'force_check' ], 9 );
+	}
+
+	/**
+	 * "Check again" on Dashboard → Updates (force-check=1) only forces the core
+	 * check. Drop the release cache and WordPress' plugin update data before
+	 * wp_update_plugins runs (priority 10), so a new release shows at once.
+	 */
+	public function force_check(): void {
+		if ( empty( $_GET['force-check'] ) || ! current_user_can( 'update_plugins' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only cache refresh.
+			return;
+		}
+		$this->release_cache = null;
+		delete_transient( self::CACHE_KEY );
+		delete_site_transient( 'update_plugins' );
 	}
 
 	/**
