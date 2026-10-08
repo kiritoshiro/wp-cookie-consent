@@ -45,7 +45,10 @@ final class Frontend {
 		}
 
 		wp_enqueue_style( 'aicc', AICC_URL . 'assets/css/banner.css', [], VERSION );
-		wp_enqueue_script( 'aicc', AICC_URL . 'assets/js/banner.js', [], VERSION, true );
+		// Deferred: the banner starts on DOMContentLoaded anyway, so it no longer
+		// stops the browser from parsing the page. The data-no-defer attributes in
+		// script_tag() still keep optimisation plugins from delaying it further.
+		wp_enqueue_script( 'aicc', AICC_URL . 'assets/js/banner.js', [], VERSION, [ 'in_footer' => true, 'strategy' => 'defer' ] );
 
 		wp_localize_script( 'aicc', 'AICC', $this->config() );
 	}
