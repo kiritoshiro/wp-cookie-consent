@@ -23,6 +23,7 @@ final class Settings {
 			'consent_days'     => 180,
 			'block_embeds'     => 1,
 			'consent_mode'     => 1,               // Google Consent Mode v2 defaults
+			'respect_gpc'      => 1,               // Global Privacy Control answers "necessary only"
 			'log_consent'      => 1,
 			'log_months'       => 24,               // how long consent records are kept
 			'reask_on_new'     => 1,               // re-ask when the scanner finds new optional cookies
@@ -64,7 +65,7 @@ final class Settings {
 		$defaults = self::defaults();
 		$out      = self::all();
 
-		foreach ( [ 'enabled', 'lang_switcher', 'block_embeds', 'consent_mode', 'log_consent', 'reask_on_new', 'scan_enabled', 'yt_nocookie' ] as $flag ) {
+		foreach ( [ 'enabled', 'lang_switcher', 'block_embeds', 'consent_mode', 'respect_gpc', 'log_consent', 'reask_on_new', 'scan_enabled', 'yt_nocookie' ] as $flag ) {
 			$out[ $flag ] = empty( $input[ $flag ] ) ? 0 : 1;
 		}
 

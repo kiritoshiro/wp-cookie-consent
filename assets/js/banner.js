@@ -76,13 +76,15 @@
 		var clean = {};
 		optionalCats().forEach(function (cat) { clean[cat.slug] = data.cats[cat.slug] === true; });
 
-		return {
+		var loaded = {
 			cats: clean,
 			rev: CFG.revision,
 			ts: data.ts,
 			lang: (typeof data.lang === 'string' && CFG.langs[data.lang]) ? data.lang : CFG.lang,
 			cid: data.cid
 		};
+		if (data.src === 'gpc') { loaded.src = 'gpc'; }
+		return loaded;
 	}
 
 	function uuid() {
@@ -90,7 +92,7 @@
 		return 'c-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
 	}
 
-	function saveState(cats) {
+	function storeState(cats, src) {
 		var clean = {};
 		optionalCats().forEach(function (cat) { clean[cat.slug] = cats[cat.slug] === true; });
 		state = {
@@ -100,7 +102,12 @@
 			lang: lang,
 			cid: (state && state.cid) || uuid()
 		};
+		if (src) { state.src = src; }   // 'gpc': answered by the browser, not a click
 		write(KEY, JSON.stringify(state));
+	}
+
+	function saveState(cats) {
+		storeState(cats);
 		applyConsent();
 		logConsent();
 	}
@@ -344,6 +351,7 @@
 			var when = new Date(state.ts).toLocaleDateString();
 			text = S('status_saved').replace('%s', when) + ' ' + S('status_allowed') + ' ' +
 				(names.length ? names.join(', ') : S('status_only_nec'));
+			if (state.src === 'gpc') { text += '. ' + S('status_gpc'); }
 		}
 		Array.prototype.forEach.call(nodes, function (node) { node.textContent = text; });
 	}
@@ -496,6 +504,18 @@
 	if (savedLang && CFG.langs[savedLang]) { lang = savedLang; }
 
 	state = loadState();
+
+	// Global Privacy Control (on by default in DuckDuckGo, also Brave and
+	// opt-in in Firefox) already answers the question: the browser asks for
+	// the most private option. DuckDuckGo's cookie pop-up protection does not
+	// recognise this banner, so the signal is what reaches us. Record
+	// "necessary only" once, exactly as the reject button would, and skip
+	// the banner; the visitor can still change it from the settings link.
+	// Decided before applyConsent() below, so the implied set never loads.
+	if (!state && CFG.gpc && navigator.globalPrivacyControl === true) {
+		storeState(allOff(), 'gpc');
+		logConsent();
+	}
 	root.hidden = false;
 
 	applyStrings();

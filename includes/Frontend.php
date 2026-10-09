@@ -94,6 +94,7 @@ final class Frontend {
 			'precheck'    => array_values( (array) Settings::get( 'precheck' ) ),
 			'implied'     => array_values( (array) Settings::get( 'implied' ) ),
 			'consentMode' => (bool) Settings::get( 'consent_mode' ),
+			'gpc'         => (bool) Settings::get( 'respect_gpc' ),
 			'log'         => (bool) Settings::get( 'log_consent' ),
 			'endpoint'    => esc_url_raw( rest_url( 'aicc/v1/consent' ) ),
 			'policyUrl'   => $this->policy_url(),
