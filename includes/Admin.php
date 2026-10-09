@@ -317,7 +317,9 @@ final class Admin {
 					<th scope="row"><?php esc_html_e( 'Blokavimas', 'aicc' ); ?></th>
 					<td>
 						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[block_embeds]" value="1" <?php checked( $s['block_embeds'] ); ?>> <?php esc_html_e( 'Blokuoti įterptą turinį (YouTube, Vimeo, Facebook, žemėlapiai) iki sutikimo', 'aicc' ); ?></label><br>
-						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[consent_mode]" value="1" <?php checked( $s['consent_mode'] ); ?>> <?php esc_html_e( 'Naudoti „Google Consent Mode v2“ signalus', 'aicc' ); ?></label>
+						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[consent_mode]" value="1" <?php checked( $s['consent_mode'] ); ?>> <?php esc_html_e( 'Naudoti „Google Consent Mode v2“ signalus', 'aicc' ); ?></label><br>
+						<label><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[respect_gpc]" value="1" <?php checked( $s['respect_gpc'] ); ?>> <?php esc_html_e( 'Gerbti naršyklės „Global Privacy Control“ signalą', 'aicc' ); ?></label>
+						<p class="description"><?php esc_html_e( 'DuckDuckGo, Brave ir kitos privatumą saugančios naršyklės siunčia šį signalą. Tokiems lankytojams juosta nerodoma, iškart taikoma „Tik būtinieji“; pasirinkimą jie gali pakeisti bet kada.', 'aicc' ); ?></p>
 					</td>
 				</tr>
 				<tr>

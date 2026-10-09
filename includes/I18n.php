@@ -205,6 +205,11 @@ final class I18n {
 				'en' => 'Your choice was saved on %s.',
 				'ru' => 'Ваш выбор сохранён %s.',
 			],
+			'status_gpc'        => [
+				'lt' => 'Pritaikytas jūsų naršyklės privatumo signalas (Global Privacy Control).',
+				'en' => 'Your browser\'s privacy signal (Global Privacy Control) was applied.',
+				'ru' => 'Применён сигнал конфиденциальности вашего браузера (Global Privacy Control).',
+			],
 			'status_allowed'    => [
 				'lt' => 'Leidžiama:',
 				'en' => 'Allowed:',
