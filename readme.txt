@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.16
+Stable tag: 1.0.17
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -50,6 +50,9 @@ Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https:
 Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo į saugyklą. Kai GitHub leidimas paskelbiamas, veiksmas prideda wp-cookie-consent.zip diegimo paketą.
 
 == Keitimų istorija ==
+
+= 1.0.17 =
+* Greitis: diegimo pakete (ZIP) scenarijai ir stiliai sumažinti (SWC ir lightningcss). Kiekviename puslapyje įkeliami banner.js ir banner.css sumažėja nuo 29,5 KB iki 18,1 KB (suglaudinus nuo 8,5 KB iki 5,7 KB). Saugykloje lieka skaitomi šaltiniai.
 
 = 1.0.16 =
 * Suderinamumas su DuckDuckGo: gerbiamas naršyklės „Global Privacy Control“ signalas (DuckDuckGo jį siunčia pagal nutylėjimą, taip pat Brave). Tokiems lankytojams juosta nerodoma, iškart taikoma „Tik būtinieji“. Išjungiama nustatymuose.

@@ -21,10 +21,25 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      # SWC and lightningcss, pinned in package-lock.json; used only to minify
+      # the package. Nothing from node_modules is copied into the ZIP.
+      - name: Install the minifiers
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Build WordPress plugin ZIP
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p dist/adventistai-cookie-consent
           cp -R adventistai-cookie-consent.php includes assets readme.txt uninstall.php dist/adventistai-cookie-consent/
+          # Minify the packaged scripts and styles; the repository keeps the
+          # sources. A failure here fails the release instead of shipping
+          # unminified files.
+          node scripts/minify-package-assets.mjs dist/adventistai-cookie-consent
           (cd dist && zip -r wp-cookie-consent.zip adventistai-cookie-consent)
       - name: Attach ZIP to the GitHub release
         env:
