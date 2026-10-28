@@ -51,6 +51,9 @@ Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo 
 
 == Keitimų istorija ==
 
+= Neišleista =
+* Saugumas: atnaujinimas įdiegiamas tik tada, kai atsisiųsto paketo SHA-256 sutampa su GitHub leidimo API pateikiamu paketo kontroliniu kodu (digest). Leidimas be kontrolinio kodo nesiūlomas, o nesutapus kodui atnaujinimas sustabdomas. Atsisiuntimas leidžiamas tik iš GitHub leidimų failų serverių.
+
 = 1.0.17 =
 * Greitis: diegimo pakete (ZIP) scenarijai ir stiliai sumažinti (SWC ir lightningcss). Kiekviename puslapyje įkeliami banner.js ir banner.css sumažėja nuo 29,5 KB iki 18,1 KB (suglaudinus nuo 8,5 KB iki 5,7 KB). Saugykloje lieka skaitomi šaltiniai.
 

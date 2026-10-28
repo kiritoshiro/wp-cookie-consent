@@ -11,6 +11,8 @@ A WordPress GDPR cookie consent plugin with automatic cookie scanning and Lithua
 
 The plugin checks the latest published, non-prerelease release in this public repository. No token is needed.
 
+WordPress installs the downloaded `wp-cookie-consent.zip` only when its SHA-256 matches the `digest` that GitHub's release API reports for that asset; a release asset without a digest is not offered, and a mismatch stops the update. The download may only redirect to GitHub's release-asset hosts.
+
 A token is optional. A fine-grained GitHub personal access token with **Contents: Read** access to this repository raises the GitHub API rate limit, and is required again only if the repository becomes private. Add it to wp-config.php, before the “That's all, stop editing” line:
 
     define( 'WP_COOKIE_CONSENT_GITHUB_TOKEN', 'github_pat_...' );
