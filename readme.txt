@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.17
+Stable tag: 1.0.18
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -51,7 +51,7 @@ Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo 
 
 == Keitimų istorija ==
 
-= Neišleista =
+= 1.0.18 =
 * Saugumas: atnaujinimas įdiegiamas tik tada, kai atsisiųsto paketo SHA-256 sutampa su GitHub leidimo API pateikiamu paketo kontroliniu kodu (digest). Leidimas be kontrolinio kodo nesiūlomas, o nesutapus kodui atnaujinimas sustabdomas. Atsisiuntimas leidžiamas tik iš GitHub leidimų failų serverių.
 
 = 1.0.17 =
