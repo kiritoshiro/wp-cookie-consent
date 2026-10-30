@@ -22,6 +22,7 @@ final class Updater {
 	private const RELEASE_API    = 'https://api.github.com/repos/kiritoshiro/wp-cookie-consent/releases/latest';
 	private const ASSET_NAME     = 'wp-cookie-consent.zip';
 	private const CACHE_KEY      = 'aicc_github_latest_release';
+	private const DIGEST_PATTERN = '/^sha256:[a-f0-9]{64}$/D';
 
 	/**
 	 * Release data cached for the lifetime of this request.
@@ -176,6 +177,15 @@ final class Updater {
 			return false;
 		}
 
+		// Only a package listed in the verified latest release may be installed;
+		// its SHA-256 digest is taken from the GitHub API, not from the download.
+		$release = $this->get_latest_release();
+		$asset   = is_wp_error( $release ) ? false : $this->find_release_asset( $release );
+
+		if ( ! $asset || $this->asset_api_url( $asset ) !== $package ) {
+			return new \WP_Error( 'aicc_github_release_unverified', __( 'The WP Cookie Consent update could not be verified with GitHub. Please check for updates again later.', 'aicc' ) );
+		}
+
 		$token = $this->github_token();
 
 		$temp_file = wp_tempnam( self::ASSET_NAME );
@@ -239,6 +249,13 @@ final class Updater {
 			return new \WP_Error( 'aicc_github_invalid_package', __( 'GitHub did not return a valid WP Cookie Consent ZIP package.', 'aicc' ) );
 		}
 
+		$hash = hash_file( 'sha256', $temp_file );
+
+		if ( ! is_string( $hash ) || ! hash_equals( substr( (string) $asset['digest'], 7 ), $hash ) ) {
+			wp_delete_file( $temp_file );
+			return new \WP_Error( 'aicc_github_digest', __( 'The WP Cookie Consent update package failed its SHA-256 check.', 'aicc' ) );
+		}
+
 		return $temp_file;
 	}
 
@@ -264,8 +281,10 @@ final class Updater {
 		$response = wp_remote_get(
 			self::RELEASE_API,
 			[
-				'headers' => $this->github_headers( $token, 'application/vnd.github+json' ),
-				'timeout' => 15,
+				'headers'             => $this->github_headers( $token, 'application/vnd.github+json' ),
+				'timeout'             => 15,
+				'redirection'         => 0,
+				'limit_response_size' => 1048576,
 			]
 		);
 
@@ -327,14 +346,21 @@ final class Updater {
 	}
 
 	/**
-	 * Locate the ZIP asset attached to the release.
+	 * Locate the uploaded ZIP asset attached to the release. The asset must carry
+	 * the SHA-256 digest GitHub computes on upload; without one there is no update.
 	 *
 	 * @param array $release GitHub release response.
 	 * @return array|false
 	 */
 	private function find_release_asset( array $release ) {
-		foreach ( $release['assets'] ?? [] as $asset ) {
-			if ( self::ASSET_NAME === ( $asset['name'] ?? '' ) && ! empty( $asset['id'] ) && is_numeric( $asset['id'] ) ) {
+		foreach ( (array) ( $release['assets'] ?? [] ) as $asset ) {
+			if (
+				is_array( $asset )
+				&& self::ASSET_NAME === ( $asset['name'] ?? '' )
+				&& ! empty( $asset['id'] ) && is_numeric( $asset['id'] )
+				&& 'uploaded' === ( $asset['state'] ?? 'uploaded' )
+				&& is_string( $asset['digest'] ?? null ) && preg_match( self::DIGEST_PATTERN, $asset['digest'] )
+			) {
 				return $asset;
 			}
 		}
@@ -382,7 +408,7 @@ final class Updater {
 	}
 
 	/**
-	 * Allow only secure GitHub release CDN redirects.
+	 * Allow only GitHub's release-asset CDN hosts as the download redirect.
 	 *
 	 * @param string $url Redirect URL.
 	 * @return bool
@@ -394,15 +420,11 @@ final class Updater {
 			return false;
 		}
 
-		$host = strtolower( $parts['host'] );
-
-		if ( isset( $parts['port'] ) && 443 !== (int) $parts['port'] ) {
+		if ( isset( $parts['port'] ) ) {
 			return false;
 		}
 
-		return in_array( $host, [ 'github.com', 'release-assets.githubusercontent.com', 'objects.githubusercontent.com' ], true )
-			|| str_ends_with( $host, '.githubusercontent.com' )
-			|| str_ends_with( $host, '.amazonaws.com' );
+		return in_array( strtolower( $parts['host'] ), [ 'release-assets.githubusercontent.com', 'objects.githubusercontent.com' ], true );
 	}
 
 	/**
