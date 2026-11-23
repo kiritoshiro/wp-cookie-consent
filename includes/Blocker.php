@@ -23,8 +23,10 @@ final class Blocker {
 		if ( ! Settings::get( 'enabled' ) || ! Settings::get( 'consent_mode' ) ) {
 			return;
 		}
+		// Opted out of Rocket Loader and other script-delay tools, like banner.js:
+		// a delayed default would land after banner.js has already released GA4.
 		?>
-<script data-aicc-ignore>
+<script data-aicc-ignore data-cfasync="false" data-no-optimize="1" data-no-defer="1" data-nowprocket>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',functionality_storage:'denied',personalization_storage:'denied',security_storage:'granted',wait_for_update:500});
 </script>

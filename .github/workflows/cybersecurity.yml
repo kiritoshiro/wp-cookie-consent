@@ -70,6 +70,9 @@ jobs:
     - name: WordPress security (PHPCS)
       if: ${{ !cancelled() }}
       run: .github/security/vendor/bin/phpcs --standard=.github/security/phpcs.xml .
+    - name: Consent Mode order tests
+      if: ${{ !cancelled() }}
+      run: php tests/consent-mode.php
     - name: Updater tests
       if: ${{ !cancelled() }}
       run: php tests/updater.php

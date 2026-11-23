@@ -200,7 +200,14 @@
 	}
 
 	function consentModeUpdate() {
-		if (!CFG.consentMode || typeof window.gtag !== 'function') { return; }
+		if (!CFG.consentMode) { return; }
+		// The default in <head> may not have run yet (an optimiser delayed it).
+		// Queue the update anyway, before unblockScripts() releases the tags,
+		// or a returning visitor's consent never reaches them.
+		window.dataLayer = window.dataLayer || [];
+		if (typeof window.gtag !== 'function') {
+			window.gtag = function () { window.dataLayer.push(arguments); };
+		}
 		window.gtag('consent', 'update', {
 			ad_storage: allowed('marketing') ? 'granted' : 'denied',
 			ad_user_data: allowed('marketing') ? 'granted' : 'denied',
