@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.18
+Stable tag: 1.0.19
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -50,6 +50,9 @@ Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https:
 Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo į saugyklą. Kai GitHub leidimas paskelbiamas, veiksmas prideda wp-cookie-consent.zip diegimo paketą.
 
 == Keitimų istorija ==
+
+= 1.0.19 =
+* Pataisa: „Google Consent Mode“ numatytieji nustatymai dabar visada įvykdomi prieš juostos scenarijų, net kai „Cloudflare Rocket Loader“ ar kitas optimizavimo įskiepis atideda scenarijus. Anksčiau grįžusio lankytojo, jau davusio sutikimą, sutikimas „Google Analytics“ nebuvo perduotas, todėl jis buvo laikomas nesutikusiu.
 
 = 1.0.18 =
 * Saugumas: atnaujinimas įdiegiamas tik tada, kai atsisiųsto paketo SHA-256 sutampa su GitHub leidimo API pateikiamu paketo kontroliniu kodu (digest). Leidimas be kontrolinio kodo nesiūlomas, o nesutapus kodui atnaujinimas sustabdomas. Atsisiuntimas leidžiamas tik iš GitHub leidimų failų serverių.
