@@ -4,7 +4,7 @@ Tags: gdpr, cookies, consent, privacy, lithuanian
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.4
-Stable tag: 1.0.19
+Stable tag: 1.0.20
 License: GPLv2 or later
 
 Neįkyrus GDPR slapukų sutikimas su automatiniu slapukų skenavimu. Sąsaja lietuvių, anglų ir rusų kalbomis.
@@ -50,6 +50,12 @@ Naujinimai tikrinami naujausioje ne bandomojoje GitHub leidimo versijoje: https:
 Tokenui suteikite tik šios saugyklos Contents: Read leidimą ir neįkelkite jo į saugyklą. Kai GitHub leidimas paskelbiamas, veiksmas prideda wp-cookie-consent.zip diegimo paketą.
 
 == Keitimų istorija ==
+
+= 1.0.20 =
+* Pataisa: užblokuoto scenarijaus kategorija (pvz., „Google Analytics“ – Analitiniai) dabar visada rodoma juostoje, net jei jos slapukai dar neužregistruoti. Anksčiau kategorija atsirasdavo tik tada, kai sąraše jau buvo jos slapukas, o užblokuotas scenarijus slapuko niekada neįrašo, todėl tokio scenarijaus nebuvo galima įjungti net „Sutikti su visais“.
+* Užblokuotos paslaugos įsimenamos (90 dienų nuo paskutinio aptikimo), jų žinomi slapukai įrašomi į sąrašą, o atsiradus naujai kategorijai lankytojų sutikimo klausiama iš naujo (jei įjungtas pakartotinis klausimas).
+* Skenuojant puslapiuose rasta paslauga nebeišmetama iš sąrašo vien dėl to, kad neįjungtas su ja siejamas įskiepis (pvz., GA be „Site Kit“).
+* Pataisa: „Klausti visų lankytojų sutikimo iš naujo“ ir pakartotinis klausimas radus naujų slapukų administravimo srityje vėl padidina sutikimo versiją. Anksčiau nustatymų valymo funkcija versijos pakeitimą atmesdavo, todėl lankytojų iš naujo nebuvo klausiama.
 
 = 1.0.19 =
 * Pataisa: „Google Consent Mode“ numatytieji nustatymai dabar visada įvykdomi prieš juostos scenarijų, net kai „Cloudflare Rocket Loader“ ar kitas optimizavimo įskiepis atideda scenarijus. Anksčiau grįžusio lankytojo, jau davusio sutikimą, sutikimas „Google Analytics“ nebuvo perduotas, todėl jis buvo laikomas nesutikusiu.

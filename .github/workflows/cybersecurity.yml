@@ -76,6 +76,9 @@ jobs:
     - name: Updater tests
       if: ${{ !cancelled() }}
       run: php tests/updater.php
+    - name: Consent category tests
+      if: ${{ !cancelled() }}
+      run: php tests/categories.php
     - name: Workflow syntax (actionlint)
       if: ${{ !cancelled() }}
       shell: bash

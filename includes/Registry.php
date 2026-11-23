@@ -15,7 +15,15 @@ final class Registry {
 
 	public const COOKIES_OPTION = 'aicc_cookies';
 
+	/** Services the blocker or scanner found on the site: [ service key => last seen ]. */
+	public const SEEN_OPTION = 'aicc_seen_services';
+
+	/** A service not seen for this long no longer keeps its category in the banner. */
+	public const SEEN_TTL = 90 * DAY_IN_SECONDS;
+
 	private static ?array $stored_cache = null;
+
+	private static ?array $seen_cache = null;
 
 	/**
 	 * Known services. Patterns are plain substrings, matched case-insensitively.
@@ -697,10 +705,17 @@ final class Registry {
 
 		$removed = [];
 		$kept    = [];
+		$seen    = self::seen();
 
 		foreach ( self::stored() as $row ) {
 			$svc = $row['service'] ? self::service( (string) $row['service'] ) : null;
 			$req = (array) ( $svc['plugins'] ?? [] );
+
+			// A service found in the site's pages stays, whichever plugin or theme adds it.
+			if ( isset( $seen[ (string) $row['service'] ] ) ) {
+				$kept[] = $row;
+				continue;
+			}
 
 			if ( $svc !== null && $req !== [] && array_intersect( $req, $active ) === [] && ( $row['source'] ?? '' ) !== 'manual' ) {
 				$removed[] = (string) $row['name'];
@@ -751,11 +766,69 @@ final class Registry {
 		return $grouped;
 	}
 
-	/** Categories that actually have something to consent to. */
+	/** Recently seen services: [ service key => last seen ], unknown and expired keys dropped. */
+	public static function seen(): array {
+		if ( self::$seen_cache === null ) {
+			$raw              = get_option( self::SEEN_OPTION, [] );
+			self::$seen_cache = [];
+			foreach ( is_array( $raw ) ? $raw : [] as $key => $time ) {
+				if ( is_string( $key ) && is_int( $time ) && self::service( $key ) !== null ) {
+					self::$seen_cache[ $key ] = $time;
+				}
+			}
+		}
+
+		$cutoff = time() - self::SEEN_TTL;
+
+		return array_filter( self::$seen_cache, static fn( int $time ): bool => $time >= $cutoff );
+	}
+
+	/**
+	 * Note services found in the site's pages. Writes at most once a day per
+	 * service, because the blocker calls this on every uncached page view.
+	 * Returns the keys that were not seen before (or had expired).
+	 */
+	public static function mark_seen( array $keys ): array {
+		$recent = self::seen();
+		$all    = self::$seen_cache ?? [];
+		$now    = time();
+		$fresh  = [];
+		$dirty  = false;
+
+		foreach ( array_unique( $keys ) as $key ) {
+			if ( ! is_string( $key ) || self::service( $key ) === null ) {
+				continue;
+			}
+			if ( ! isset( $recent[ $key ] ) ) {
+				$fresh[] = $key;
+			}
+			if ( ( $all[ $key ] ?? 0 ) < $now - DAY_IN_SECONDS ) {
+				$all[ $key ] = $now;
+				$dirty       = true;
+			}
+		}
+
+		if ( $dirty ) {
+			self::$seen_cache = $all;
+			update_option( self::SEEN_OPTION, $all, true );
+		}
+
+		return $fresh;
+	}
+
+	/**
+	 * Categories that actually have something to consent to: a stored cookie,
+	 * or a service the blocker holds back. Without the second, a blocked
+	 * script whose cookies were never recorded (it never ran) could never be
+	 * allowed.
+	 */
 	public static function active_categories(): array {
 		$grouped = [];
 		foreach ( self::stored() as $row ) {
 			$grouped[ (string) ( $row['category'] ?? 'unknown' ) ] = true;
+		}
+		foreach ( array_keys( self::seen() ) as $key ) {
+			$grouped[ (string) ( self::service( $key )['category'] ?? 'unknown' ) ] = true;
 		}
 
 		$out = [];
