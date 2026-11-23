@@ -13,6 +13,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 delete_option( 'aicc_settings' );
 delete_option( 'aicc_cookies' );
+delete_option( 'aicc_seen_services' );
 delete_option( 'aicc_scan_state' );
 delete_option( 'aicc_version' );
 

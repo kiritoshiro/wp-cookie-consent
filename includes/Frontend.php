@@ -59,7 +59,7 @@ final class Frontend {
 	 * concatenate and occasionally drop that inline `var AICC` block, while
 	 * the attribute travels with the markup and cannot be separated from it.
 	 */
-	private function config(): array {
+	public function config(): array {
 		$strings = [];
 		foreach ( I18n::LANGS as $code ) {
 			$strings[ $code ] = I18n::bundle( $code );

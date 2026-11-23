@@ -14,6 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 final class Blocker {
 
+	/** Services held back on this page: [ key => true ]. */
+	private array $blocked = [];
+
 	public function hooks(): void {
 		add_action( 'wp_head', [ $this, 'consent_mode_defaults' ], 1 );
 		add_action( 'template_redirect', [ $this, 'start_buffer' ], 0 );
@@ -66,6 +69,8 @@ gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personali
 			return $html;
 		}
 
+		$this->blocked = [];
+
 		$html = (string) preg_replace_callback(
 			'#<script\b([^>]*)>(.*?)</script>#is',
 			[ $this, 'script_callback' ],
@@ -82,6 +87,19 @@ gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personali
 				'#<iframe\b([^>]*?)/>#is',
 				[ $this, 'iframe_callback' ],
 				$html
+			);
+		}
+
+		// A blocked service needs its category in the banner, or it can never be
+		// allowed. The banner was printed earlier in this page, so when that adds
+		// a category, print its configuration again: a page cache may keep this copy.
+		if ( $this->blocked !== [] && Scanner::services_blocked( array_keys( $this->blocked ) ) ) {
+			$config = esc_attr( (string) wp_json_encode( ( new Frontend() )->config() ) );
+			$html   = (string) preg_replace_callback(
+				'#\bdata-aicc-config="[^"]*"#',
+				static fn(): string => 'data-aicc-config="' . $config . '"',
+				$html,
+				1
 			);
 		}
 
@@ -172,6 +190,8 @@ gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personali
 			return $full;
 		}
 
+		$this->blocked[ $service ] = true;
+
 		$attrs = $this->remove_attribute( $attrs, 'src' );
 		$attrs = $this->remove_attribute( $attrs, 'type' );
 
@@ -216,6 +236,8 @@ gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personali
 		if ( ! $cat->is_optional() ) {
 			return $full;
 		}
+
+		$this->blocked[ $service ] = true;
 
 		$lang = I18n::current();
 		$text = sprintf(

@@ -111,6 +111,7 @@ final class Scanner {
 		$state               = self::state();
 		$state['new']        = [];
 		$detected            = [];
+		$in_pages            = [];
 		$fetched             = 0;
 		$state['last_error'] = '';
 
@@ -145,9 +146,13 @@ final class Scanner {
 
 			foreach ( $this->detect_in_html( $body ) as $service ) {
 				$detected[ $service ] = true;
+				$in_pages[ $service ] = true;
 			}
 		}
 		delete_transient( 'aicc_probe_' . $token );
+
+		$before = self::category_slugs();
+		Registry::mark_seen( array_keys( $in_pages ) );
 
 		$new = [];
 		foreach ( array_keys( $detected ) as $service ) {
@@ -165,7 +170,7 @@ final class Scanner {
 
 		update_option( self::STATE_OPTION, $state );
 
-		$this->after_new_cookies( $new );
+		$this->after_new_cookies( $new, array_diff( self::category_slugs(), $before ) !== [] );
 
 		return $state;
 	}
@@ -200,15 +205,45 @@ final class Scanner {
 	}
 
 	/**
-	 * If the scan turned up new optional cookies, ask visitors again —
-	 * consent given before a new tracker existed does not cover it.
+	 * The blocker held these services back on a page. Remember them so their
+	 * category is offered in the banner, and record their known cookies the
+	 * first time, since cookies of a blocked script never reach a scan.
+	 * Returns true when the banner gained a category.
 	 */
-	private function after_new_cookies( array $new ): void {
-		if ( $new === [] ) {
+	public static function services_blocked( array $keys ): bool {
+		$before = self::category_slugs();
+		$fresh  = Registry::mark_seen( $keys );
+		if ( $fresh === [] ) {
+			return false;
+		}
+
+		$new = [];
+		foreach ( $fresh as $service ) {
+			array_push( $new, ...Registry::record_service( $service ) );
+		}
+
+		$added = array_diff( self::category_slugs(), $before ) !== [];
+		( new self() )->after_new_cookies( $new, $added );
+
+		return $added;
+	}
+
+	/** @return string[] */
+	private static function category_slugs(): array {
+		return array_map( static fn( Category $cat ): string => $cat->value, Registry::active_categories() );
+	}
+
+	/**
+	 * If the scan turned up new optional cookies or a new category, ask
+	 * visitors again — consent given before a new tracker existed does not
+	 * cover it.
+	 */
+	private function after_new_cookies( array $new, bool $new_category = false ): void {
+		if ( $new === [] && ! $new_category ) {
 			return;
 		}
 
-		$needs_reask = false;
+		$needs_reask = $new_category;
 		foreach ( $new as $entry ) {
 			$cat = Category::from_slug( (string) $entry['category'] );
 			if ( $cat->is_optional() || $cat === Category::Unknown ) {
@@ -221,7 +256,9 @@ final class Scanner {
 			Settings::bump_revision();
 		}
 
-		do_action( 'aicc_new_cookies_found', $new );
+		if ( $new !== [] ) {
+			do_action( 'aicc_new_cookies_found', $new );
+		}
 	}
 
 	private function urls_to_scan(): array {

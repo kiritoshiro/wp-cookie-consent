@@ -97,6 +97,13 @@ final class Settings {
 		$out['consent_days'] = max( 30, min( 365, absint( $input['consent_days'] ?? 180 ) ) );
 		$out['log_months']   = max( 6, min( 60, absint( $input['log_months'] ?? 24 ) ) );
 
+		// Not a form field. bump_revision() saves through here too (in wp-admin, where
+		// the setting is registered); without this the stored revision won and
+		// "ask everyone again" and re-asking on new cookies did nothing.
+		if ( isset( $input['revision'] ) && is_scalar( $input['revision'] ) ) {
+			$out['revision'] = max( 1, min( 65000, absint( $input['revision'] ) ) );
+		}
+
 		$freq                  = sanitize_key( self::scalar( $input['scan_frequency'] ?? '' ) );
 		$out['scan_frequency'] = in_array( $freq, [ 'daily', 'weekly', 'monthly' ], true ) ? $freq : $defaults['scan_frequency'];
 
